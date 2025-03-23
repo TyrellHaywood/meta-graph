@@ -245,7 +245,7 @@ const Graph: React.FC<GraphProps> = ({
 
     // Add border for selected node
     if (id === selectedNodeId) {
-      ctx.strokeStyle = "#fff";
+      ctx.strokeStyle = "#000000";
       ctx.lineWidth = 2 / globalScale;
       ctx.stroke();
     }
@@ -258,7 +258,7 @@ const Graph: React.FC<GraphProps> = ({
       ctx.font = `${12 / globalScale}px Sans-Serif`;
       ctx.textAlign = "center";
       ctx.textBaseline = "middle";
-      ctx.fillStyle = "#fff";
+      ctx.fillStyle = "#000000";
       ctx.fillText(node.title, x, y + (size * 1.5) / globalScale);
     }
   };
@@ -335,8 +335,8 @@ const Graph: React.FC<GraphProps> = ({
           width: (node.size || nodeSize) * 2,
           height: (node.size || nodeSize) * 2,
           borderRadius: "50%",
-          border: node.id === selectedNodeId ? "2px solid #fff" : "none",
-          boxShadow: node.id === selectedNodeId ? "0 0 8px #fff" : "none",
+          border: node.id === selectedNodeId ? "2px solid #000000" : "none",
+          boxShadow: node.id === selectedNodeId ? "0 0 8px #000000" : "none",
         }}
       />
     );

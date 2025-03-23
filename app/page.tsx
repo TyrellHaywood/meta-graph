@@ -50,9 +50,7 @@ const GraphTest: React.FC = () => {
   };
 
   return (
-    <div className="container mx-auto p-4">
-      <h1 className="text-2xl font-bold mb-4">Sound Graph Visualization</h1>
-
+    <div className="container mx-auto p-4 text-black">
       <div className="mb-4">
         <h2 className="text-lg font-semibold">
           Selected Node: {selectedNodeId || "None"}
