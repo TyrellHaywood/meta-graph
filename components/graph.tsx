@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import ForceGraph2D from "react-force-graph-2d";
 import * as d3 from "d3";
 
@@ -57,6 +57,12 @@ interface GraphProps {
     colorScheme?: Record<string, string>;
   };
 }
+
+// States
+const [graphData, setGraphData] = useState<{ nodes: any[]; links: any[] }>({
+  nodes: [],
+  links: [],
+});
 
 // Helper function to calculate similarity
 // Compares metadata between two nodes
@@ -187,6 +193,49 @@ const Graph: React.FC<GraphProps> = ({
     })),
   });
 
+  // Paint nodes on canvas
+  // Custom rendering function for nodes
+  const paintNode = (
+    node: any,
+    ctx: CanvasRenderingContext2D,
+    globalScale: number
+  ) => {
+    const { x, y, val, color, id, __highlighted } = node;
+    const size = val || nodeSize;
+
+    // Apply highlight effects
+    ctx.beginPath();
+    ctx.arc(
+      x,
+      y,
+      (size * (id === selectedNodeId ? 1.4 : 1)) / globalScale,
+      0,
+      2 * Math.PI
+    );
+    ctx.fillStyle = color || "#888";
+    ctx.globalAlpha = __highlighted === undefined || __highlighted ? 1 : 0.3;
+    ctx.fill();
+
+    // Add border for selected node
+    if (id === selectedNodeId) {
+      ctx.strokeStyle = "#fff";
+      ctx.lineWidth = 2 / globalScale;
+      ctx.stroke();
+    }
+
+    // Reset alpha
+    ctx.globalAlpha = 1;
+
+    // Add label for nodes
+    if (node.title && (globalScale > 0.7 || id === selectedNodeId)) {
+      ctx.font = `${12 / globalScale}px Sans-Serif`;
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+      ctx.fillStyle = "#fff";
+      ctx.fillText(node.title, x, y + (size * 1.5) / globalScale);
+    }
+  };
+
   // Highlight connections when a node is selected, runs whenever selectedNodeId changes
   // Centers the view on the selected node
   // Identifies all nodes connected to the selected node
@@ -279,45 +328,33 @@ const Graph: React.FC<GraphProps> = ({
       */}
       <ForceGraph2D
         ref={graphRef}
-        graphData={processedData.current}
+        graphData={graphData}
         nodeAutoColorBy="group"
-        linkDirectionalArrowLength={(edge) =>
-          edge.type === "parent-child" ? 3 : 0
+        nodeCanvasObject={paintNode}
+        linkDirectionalArrowLength={(link: any) =>
+          link.type === "parent-child" ? 3 : 0
         }
-        linkWidth={(link) =>
+        linkWidth={(link: any) =>
           link.__highlighted ? (link.width || 2) * 2 : link.width || 2
         }
-        linkColor={(link) => link.color}
-        // linkOpacity={0.6}
+        linkColor={(link: any) => link.color}
+        linkOpacity={0.6}
         nodeRelSize={nodeSize}
-        linkDirectionalParticles={(link) =>
+        linkDirectionalParticles={(link: any) =>
           link.__highlighted && link.type === "parent-child" ? 3 : 0
         }
         linkDirectionalParticleSpeed={0.005}
-        d3Force={(key, force) => {
-          if (key === "charge") {
-            // Modify repulsion force
-            const charge = d3.forceManyBody().strength(chargeStrength);
-            return charge;
-          }
-          if (key === "link" && force) {
-            // Customize link distance
-            force.distance(
-              (link) => linkDistance * (1 - (link.weight || 0.5) * 0.5)
-            );
-          }
-          if (key === "cluster" && !force) {
-            // Add clustering force
-            return d3
-              .forceCluster()
-              .centers((d) => ({ x: 0, y: 0, group: d.group }))
-              .strength(clusteringStrength);
-          }
-        }}
+        // Custom forces
+        d3VelocityDecay={0.3}
         cooldownTicks={100}
-        onNodeClick={(node) => onNodeClick && onNodeClick(node)}
+        onNodeClick={(node: any) => onNodeClick && onNodeClick(node)}
         width={width}
         height={height}
+        // Configure force simulation
+        dagMode={undefined}
+        dagLevelDistance={undefined}
+        linkDistance={linkDistance}
+        onEngineStop={() => console.log("Force simulation completed")}
       />
     </div>
   );
