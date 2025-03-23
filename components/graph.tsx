@@ -22,6 +22,7 @@ export interface Node {
   group?: string;
   x?: number;
   y?: number;
+  __highlighted?: boolean;
 }
 
 export interface Edge {
@@ -31,6 +32,7 @@ export interface Edge {
   weight: number;
   color?: string;
   width?: number;
+  __highlighted?: boolean;
 }
 
 export interface GraphData {
@@ -181,8 +183,59 @@ const Graph: React.FC<GraphProps> = ({
       weight: edge.weight,
       color: edge.color || colorScheme[edge.type] || colorScheme.default,
       width: edge.width || edge.weight * 2,
+      __highlighted: false,
     })),
   });
+
+  // Highlight connections when a node is selected, runs whenever selectedNodeId changes
+  // Centers the view on the selected node
+  // Identifies all nodes connected to the selected node
+  // Adds a __highlighted property to nodes and links
+  // Forces a refresh of graph visualization state
+  useEffect(() => {
+    if (selectedNodeId && graphRef.current) {
+      const selectedNode = processedData.current.nodes.find(
+        (node) => node.id === selectedNodeId
+      );
+
+      if (selectedNode) {
+        // Center view on the selected node
+        graphRef.current.centerAt(selectedNode.x, selectedNode.y, 1000);
+
+        // Highlight the node and its connections
+        const connectedNodeIds = processedData.current.links
+          .filter(
+            (link) =>
+              link.source.id === selectedNodeId ||
+              link.target.id === selectedNodeId
+          )
+          .flatMap((link) => [
+            typeof link.source === "object" ? link.source.id : link.source,
+            typeof link.target === "object" ? link.target.id : link.target,
+          ]);
+
+        processedData.current.nodes.forEach((node) => {
+          // Dim unconnected nodes
+          node.__highlighted =
+            node.id === selectedNodeId || connectedNodeIds.includes(node.id);
+        });
+
+        processedData.current.links.forEach((link) => {
+          const sourceId =
+            typeof link.source === "object" ? link.source.id : link.source;
+          const targetId =
+            typeof link.target === "object" ? link.target.id : link.target;
+
+          // Highlight direct connections
+          link.__highlighted =
+            sourceId === selectedNodeId || targetId === selectedNodeId;
+        });
+
+        // Trigger re-render
+        graphRef.current.refresh();
+      }
+    }
+  }, [selectedNodeId]);
 
   return <></>;
 };
