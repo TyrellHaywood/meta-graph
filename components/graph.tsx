@@ -165,5 +165,24 @@ const Graph: React.FC<GraphProps> = ({
     },
   } = config;
 
+  // Process data to work with force-graph
+  const processedData = useRef({
+    nodes: data.nodes.map((node) => ({
+      ...node,
+      val: node.size || nodeSize,
+    })),
+    links: [
+      ...data.edges,
+      ...generateImplicitEdges(data.nodes, similarityThreshold),
+    ].map((edge) => ({
+      source: edge.source,
+      target: edge.target,
+      type: edge.type,
+      weight: edge.weight,
+      color: edge.color || colorScheme[edge.type] || colorScheme.default,
+      width: edge.width || edge.weight * 2,
+    })),
+  });
+
   return <></>;
 };
