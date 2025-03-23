@@ -133,3 +133,30 @@ export function generateImplicitEdges(
 
   return implicitEdges;
 }
+
+const Graph: React.FC<GraphProps> = ({
+  data,
+  onNodeClick,
+  width = 800,
+  height = 600,
+  selectedNodeId,
+  config = {},
+}) => {
+  const graphRef = useRef<any>(null);
+
+  // Default configuration with fallbacks
+  const {
+    nodeSize = 5,
+    linkDistance = 100,
+    chargeStrength = -30,
+    similarityThreshold = 0.3,
+    clusteringStrength = 0.5,
+    colorScheme = {
+      "parent-child": "#ff6b6b",
+      similarity: "#4ecdc4",
+      default: "#aaa",
+    },
+  } = config;
+
+  return <></>;
+};
