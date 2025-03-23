@@ -242,5 +242,29 @@ const Graph: React.FC<GraphProps> = ({
     }
   }, [selectedNodeId]);
 
+  // Render custom nodes
+  // Defines how each node is rendered
+  // Applies highlighting effects
+  // Uses the node's color and size properties
+
+  // NOTE: This can be replaced with any custom component that you're using this graph for
+  const NodeComponent = ({ node }: { node: Node }) => {
+    return (
+      <div
+        className="graph-node"
+        style={{
+          opacity:
+            node.__highlighted === undefined || node.__highlighted ? 1 : 0.3,
+          backgroundColor: node.color || "#888",
+          width: (node.size || nodeSize) * 2,
+          height: (node.size || nodeSize) * 2,
+          borderRadius: "50%",
+          border: node.id === selectedNodeId ? "2px solid #fff" : "none",
+          boxShadow: node.id === selectedNodeId ? "0 0 8px #fff" : "none",
+        }}
+      />
+    );
+  };
+
   return <></>;
 };
