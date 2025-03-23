@@ -15,6 +15,13 @@ export interface Node {
     tags?: string[];
     createdAt?: string | Date;
   };
+
+  // Visual properties
+  size?: number;
+  color?: string;
+  group?: string;
+  x?: number;
+  y?: number;
 }
 
 export interface Edge {
