@@ -22,6 +22,8 @@ export interface Edge {
   target: string;
   type: string;
   weight: number;
+  color?: string;
+  width?: number;
 }
 
 export interface GraphData {
@@ -97,3 +99,5 @@ export function calculateSimilarity(nodeA: Node, nodeB: Node): number {
 
   return totalAttributes > 0 ? similarityScore / totalAttributes : 0;
 }
+
+// Helper function to generate implicit edges
