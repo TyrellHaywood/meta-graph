@@ -359,3 +359,5 @@ const Graph: React.FC<GraphProps> = ({
     </div>
   );
 };
+
+export default Graph;
