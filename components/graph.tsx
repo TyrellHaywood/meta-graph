@@ -338,7 +338,7 @@ const Graph: React.FC<GraphProps> = ({
           link.__highlighted ? (link.width || 2) * 2 : link.width || 2
         }
         linkColor={(link: any) => link.color}
-        linkOpacity={0.6}
+        // linkOpacity={0.6}
         nodeRelSize={nodeSize}
         linkDirectionalParticles={(link: any) =>
           link.__highlighted && link.type === "parent-child" ? 3 : 0
@@ -353,7 +353,7 @@ const Graph: React.FC<GraphProps> = ({
         // Configure force simulation
         dagMode={undefined}
         dagLevelDistance={undefined}
-        linkDistance={linkDistance}
+        // linkDistance={linkDistance}
         onEngineStop={() => console.log("Force simulation completed")}
       />
     </div>
