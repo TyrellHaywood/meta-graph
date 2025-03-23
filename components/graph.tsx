@@ -101,3 +101,35 @@ export function calculateSimilarity(nodeA: Node, nodeB: Node): number {
 }
 
 // Helper function to generate implicit edges
+// Takes an array of nodes and a similarity threshold
+// Compares every possible pair of nodes (Currently O(n^2) operation)
+// Creates edge objects for pairs that exceed the similarity threshold
+// Sets visual properties based on similarity score
+
+// Returns: array of edge objects
+export function generateImplicitEdges(
+  nodes: Node[],
+  similarityThreshold: number = 0.3
+): Edge[] {
+  const implicitEdges: Edge[] = [];
+
+  // Compare each pair of nodes
+  for (let i = 0; i < nodes.length; i++) {
+    for (let j = i + 1; j < nodes.length; j++) {
+      const similarity = calculateSimilarity(nodes[i], nodes[j]);
+
+      if (similarity >= similarityThreshold) {
+        implicitEdges.push({
+          source: nodes[i].id,
+          target: nodes[j].id,
+          type: "similarity",
+          weight: similarity,
+          color: "rgba(150, 150, 150, 0.5)",
+          width: similarity * 3,
+        });
+      }
+    }
+  }
+
+  return implicitEdges;
+}
