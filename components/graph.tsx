@@ -48,3 +48,52 @@ interface GraphProps {
 }
 
 // Helper function to calculate similarity
+// Compares metadata between two nodes
+// Handles both scalar and array values
+
+// Arrays: calculates intersecetion size relative to larger array
+// Scalar: checks for exact match
+
+// Returns: similarity score between 0 and 1
+export function calculateSimilarity(nodeA: Node, nodeB: Node): number {
+  let similarityScore = 0;
+  let totalAttributes = 0;
+
+  // Compare each metadata attribute
+  Object.keys(nodeA.metadata).forEach((key) => {
+    if (nodeB.metadata[key as keyof typeof nodeB.metadata]) {
+      // For array values (like tags)
+      if (
+        // Type assertion needed because TypeScript doesn't know that the key is a key of metadata
+        Array.isArray(nodeA.metadata[key as keyof typeof nodeA.metadata]) &&
+        Array.isArray(nodeB.metadata[key as keyof typeof nodeB.metadata])
+      ) {
+        const intersection = (
+          nodeA.metadata[key as keyof typeof nodeA.metadata] as string[]
+        ).filter((value) =>
+          (
+            nodeB.metadata[key as keyof typeof nodeB.metadata] as string[]
+          ).includes(value)
+        );
+        similarityScore +=
+          intersection.length /
+          Math.max(
+            (nodeA.metadata[key as keyof typeof nodeA.metadata] as string[])
+              .length,
+            (nodeB.metadata[key as keyof typeof nodeB.metadata] as string[])
+              .length
+          );
+      }
+      // For scalar values
+      else if (
+        nodeA.metadata[key as keyof typeof nodeA.metadata] ===
+        nodeB.metadata[key as keyof typeof nodeB.metadata]
+      ) {
+        similarityScore += 1;
+      }
+      totalAttributes++;
+    }
+  });
+
+  return totalAttributes > 0 ? similarityScore / totalAttributes : 0;
+}
