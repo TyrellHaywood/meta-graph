@@ -26,8 +26,8 @@ export interface Node {
 }
 
 export interface Edge {
-  source: string;
-  target: string;
+  source: string | Node;
+  target: string | Node;
   type: string;
   weight: number;
   color?: string;
@@ -206,9 +206,14 @@ const Graph: React.FC<GraphProps> = ({
         const connectedNodeIds = processedData.current.links
           .filter(
             (link) =>
-              link.source.id === selectedNodeId ||
-              link.target.id === selectedNodeId
+              (typeof link.source === "object" &&
+                "id" in link.source &&
+                link.source.id === selectedNodeId) ||
+              (typeof link.target === "object" &&
+                "id" in link.target &&
+                link.target.id === selectedNodeId)
           )
+
           .flatMap((link) => [
             typeof link.source === "object" ? link.source.id : link.source,
             typeof link.target === "object" ? link.target.id : link.target,
