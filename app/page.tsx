@@ -1,3 +1,5 @@
+"use client";
+
 import React, { useState } from "react";
 import Graph from "../components/Graph";
 import dummyData from "../data/dummyData";

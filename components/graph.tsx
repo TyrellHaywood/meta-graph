@@ -58,12 +58,6 @@ interface GraphProps {
   };
 }
 
-// States
-const [graphData, setGraphData] = useState<{ nodes: any[]; links: any[] }>({
-  nodes: [],
-  links: [],
-});
-
 // Helper function to calculate similarity
 // Compares metadata between two nodes
 // Handles both scalar and array values
@@ -158,6 +152,12 @@ const Graph: React.FC<GraphProps> = ({
   config = {},
 }) => {
   const graphRef = useRef<any>(null);
+
+  // States
+  const [graphData, setGraphData] = useState<{ nodes: any[]; links: any[] }>({
+    nodes: [],
+    links: [],
+  });
 
   // Default configuration with fallbacks
   const {
