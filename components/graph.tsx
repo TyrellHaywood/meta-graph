@@ -1,6 +1,11 @@
 import React, { useEffect, useRef, useState } from "react";
-import ForceGraph2D from "react-force-graph-2d";
 import * as d3 from "d3";
+import dynamic from "next/dynamic";
+
+// Dynamically import ForceGraph2D with ssr disabled
+const ForceGraph2D = dynamic(() => import("react-force-graph-2d"), {
+  ssr: false,
+});
 
 export interface Node {
   id: string;
@@ -172,6 +177,28 @@ const Graph: React.FC<GraphProps> = ({
       default: "#aaa",
     },
   } = config;
+
+  // Initialize graph data
+  useEffect(() => {
+    setGraphData({
+      nodes: data.nodes.map((node) => ({
+        ...node,
+        val: node.size || nodeSize,
+      })),
+      links: [
+        ...data.edges,
+        ...generateImplicitEdges(data.nodes, similarityThreshold),
+      ].map((edge) => ({
+        source: edge.source,
+        target: edge.target,
+        type: edge.type,
+        weight: edge.weight,
+        color: edge.color || colorScheme[edge.type] || colorScheme.default,
+        width: edge.width || edge.weight * 2,
+        __highlighted: false,
+      })),
+    });
+  }, [data, nodeSize, similarityThreshold, colorScheme]);
 
   // Process data to work with force-graph
   const processedData = useRef({

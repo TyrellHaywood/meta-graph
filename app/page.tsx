@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Graph from "../components/Graph";
 import dummyData from "../data/dummyData";
 
@@ -8,6 +8,10 @@ const GraphTest: React.FC = () => {
   const [selectedNodeId, setSelectedNodeId] = useState<string | undefined>(
     undefined
   );
+  const [dimensions, setDimensions] = useState({
+    width: 800, // Default values
+    height: 600,
+  });
   const [graphConfig, setGraphConfig] = useState({
     nodeSize: 6,
     linkDistance: 120,
@@ -20,6 +24,25 @@ const GraphTest: React.FC = () => {
       default: "#aaaaaa",
     },
   });
+
+  // Set window dimensions after mounting
+  useEffect(() => {
+    const updateDimensions = () => {
+      setDimensions({
+        width: window.innerWidth - 50,
+        height: window.innerHeight * 0.8,
+      });
+    };
+
+    // Initial update
+    updateDimensions();
+
+    // Update on resize
+    window.addEventListener("resize", updateDimensions);
+
+    // Cleanup
+    return () => window.removeEventListener("resize", updateDimensions);
+  }, []);
 
   const handleNodeClick = (node: any) => {
     console.log("Node clicked:", node);
@@ -52,8 +75,8 @@ const GraphTest: React.FC = () => {
           data={dummyData}
           onNodeClick={handleNodeClick}
           selectedNodeId={selectedNodeId}
-          width={window.innerWidth - 50}
-          height={window.innerHeight * 0.8}
+          width={dimensions.width}
+          height={dimensions.height}
           config={graphConfig}
         />
       </div>
