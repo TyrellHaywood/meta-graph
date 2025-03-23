@@ -266,5 +266,59 @@ const Graph: React.FC<GraphProps> = ({
     );
   };
 
-  return <></>;
+  return (
+    <div
+      className="graph-container"
+      style={{ width, height, position: "relative" }}
+    >
+      {/* 
+        Renders ForceGraph2D component
+        Configures visual properties 
+        Sets up event handlers
+        Customize d3 force simulations
+      */}
+      <ForceGraph2D
+        ref={graphRef}
+        graphData={processedData.current}
+        nodeAutoColorBy="group"
+        linkDirectionalArrowLength={(edge) =>
+          edge.type === "parent-child" ? 3 : 0
+        }
+        linkWidth={(link) =>
+          link.__highlighted ? (link.width || 2) * 2 : link.width || 2
+        }
+        linkColor={(link) => link.color}
+        // linkOpacity={0.6}
+        nodeRelSize={nodeSize}
+        linkDirectionalParticles={(link) =>
+          link.__highlighted && link.type === "parent-child" ? 3 : 0
+        }
+        linkDirectionalParticleSpeed={0.005}
+        d3Force={(key, force) => {
+          if (key === "charge") {
+            // Modify repulsion force
+            const charge = d3.forceManyBody().strength(chargeStrength);
+            return charge;
+          }
+          if (key === "link" && force) {
+            // Customize link distance
+            force.distance(
+              (link) => linkDistance * (1 - (link.weight || 0.5) * 0.5)
+            );
+          }
+          if (key === "cluster" && !force) {
+            // Add clustering force
+            return d3
+              .forceCluster()
+              .centers((d) => ({ x: 0, y: 0, group: d.group }))
+              .strength(clusteringStrength);
+          }
+        }}
+        cooldownTicks={100}
+        onNodeClick={(node) => onNodeClick && onNodeClick(node)}
+        width={width}
+        height={height}
+      />
+    </div>
+  );
 };
