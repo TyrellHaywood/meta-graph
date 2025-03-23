@@ -5,14 +5,16 @@ import * as d3 from "d3";
 export interface Node {
   id: string;
 
-  // general info
+  // General info
   title: string;
   author: string;
   description: string;
 
-  // metadata for filtering
-  tags?: string[];
-  createdAt?: string | Date;
+  // Metadata for filtering
+  metadata: {
+    tags?: string[];
+    createdAt?: string | Date;
+  };
 }
 
 export interface Edge {
@@ -44,3 +46,5 @@ interface GraphProps {
     colorScheme?: Record<string, string>;
   };
 }
+
+// Helper function to calculate similarity
