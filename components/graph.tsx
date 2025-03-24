@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import * as d3 from "d3";
+import * as d3 from "d3-force";
 import dynamic from "next/dynamic";
 
 // Dynamically import ForceGraph2D with ssr disabled
@@ -344,8 +344,8 @@ const Graph: React.FC<GraphProps> = ({
 
   return (
     <div
-      className="graph-container"
-      style={{ width, height, position: "relative" }}
+      className="bg-green-100"
+      // style={{ width, height, position: "relative" }}
     >
       {/* 
         Renders ForceGraph2D component

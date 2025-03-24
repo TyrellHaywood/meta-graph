@@ -50,11 +50,8 @@ const GraphTest: React.FC = () => {
   };
 
   return (
-    <div className="container mx-auto p-4 text-black">
-      <div className="mb-4">
-        <h2 className="text-lg font-semibold">
-          Selected Node: {selectedNodeId || "None"}
-        </h2>
+    <div className="mx-auto w-screen h-screen text-black bg-red-200">
+      <div className="">
         {selectedNodeId && (
           <button
             className="mt-2 px-3 py-1 bg-gray-200 rounded-md hover:bg-gray-300"
@@ -65,10 +62,7 @@ const GraphTest: React.FC = () => {
         )}
       </div>
 
-      <div
-        className="border rounded-lg shadow-lg overflow-hidden"
-        style={{ height: "80vh" }}
-      >
+      <div className="h-screen w-screen">
         <Graph
           data={dummyData}
           onNodeClick={handleNodeClick}
