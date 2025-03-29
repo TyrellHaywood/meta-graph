@@ -1,0 +1,222 @@
+import React, { useEffect, useRef, useState } from "react";
+import ForceGraph2D from "react-force-graph-2d";
+import { ForceGraphMethods } from "react-force-graph-2d";
+import { D3DragEvent } from "d3-drag";
+import { generateDummyData, nodeColors } from "../data/dummyData";
+import { GraphData, GraphNode, TypeColorMap } from "../data/types";
+
+const SoundGraph: React.FC = () => {
+  const fgRef = useRef<ForceGraphMethods | null>(null);
+  const [selectedTypes, setSelectedTypes] = useState<string[]>([]);
+  const [availableTypes, setAvailableTypes] = useState<string[]>([]);
+  const [graphData, setGraphData] = useState<GraphData>({
+    nodes: [],
+    links: [],
+  });
+
+  useEffect(() => {
+    const data = generateDummyData();
+    setGraphData(data);
+
+    // Extract all unique types
+    const types = new Set<string>();
+    data.nodes.forEach((node) => {
+      if (node.metadata.type) {
+        node.metadata.type.forEach((type) => types.add(type));
+      }
+    });
+
+    const typeArray = Array.from(types);
+    setAvailableTypes(typeArray);
+    setSelectedTypes(typeArray); // Default to showing all types
+  }, []);
+
+  // Get the color for a node based on its first type
+  const getNodeColor = (node: GraphNode): string => {
+    if (node.metadata.type && node.metadata.type.length > 0) {
+      return nodeColors[node.metadata.type[0]] || "#ccc";
+    }
+    return "#ccc";
+  };
+
+  // Filter nodes based on selected types
+  const filteredData = React.useMemo((): GraphData => {
+    if (selectedTypes.length === 0) return graphData;
+
+    const filteredNodes = graphData.nodes.filter(
+      (node) =>
+        node.metadata.type &&
+        node.metadata.type.some((type) => selectedTypes.includes(type))
+    );
+
+    const nodeIds = new Set(filteredNodes.map((node) => node.id));
+
+    const filteredLinks = graphData.links.filter((link) => {
+      const sourceId =
+        typeof link.source === "object" ? link.source.id : link.source;
+      const targetId =
+        typeof link.target === "object" ? link.target.id : link.target;
+      return nodeIds.has(sourceId) && nodeIds.has(targetId);
+    });
+
+    return { nodes: filteredNodes, links: filteredLinks };
+  }, [graphData, selectedTypes]);
+
+  useEffect(() => {
+    // Apply clustering forces whenever filtered data changes
+    if (fgRef.current && filteredData.nodes.length > 0) {
+      // Group by type
+      const typeGroups: Record<string, string[]> = {};
+      filteredData.nodes.forEach((node) => {
+        if (node.metadata.type && node.metadata.type.length > 0) {
+          node.metadata.type.forEach((type) => {
+            if (!typeGroups[type]) {
+              typeGroups[type] = [];
+            }
+            typeGroups[type].push(node.id);
+          });
+        }
+      });
+
+      // Reset forces
+      const chargeForce = fgRef.current.d3Force("charge");
+      if (chargeForce) {
+        chargeForce.strength(-150);
+      }
+
+      const linkForce = fgRef.current.d3Force("link");
+      if (linkForce) {
+        linkForce.distance(100);
+      }
+
+      // Clear existing custom forces
+      availableTypes.forEach((type) => {
+        fgRef.current?.d3Force(`cluster-${type}`, null);
+      });
+
+      // Add new cluster forces
+      Object.keys(typeGroups).forEach((type, typeIndex) => {
+        const theta =
+          (2 * Math.PI * typeIndex) / Object.keys(typeGroups).length;
+        const radius = 200;
+        const centerX = radius * Math.cos(theta);
+        const centerY = radius * Math.sin(theta);
+
+        // Create a clustering force for this type
+        fgRef.current?.d3Force(`cluster-${type}`, (alpha: number) => {
+          for (let i = 0; i < filteredData.nodes.length; i++) {
+            const node = filteredData.nodes[i];
+            if (node.metadata.type && node.metadata.type.includes(type)) {
+              const k = 0.1 * alpha;
+              const dx = centerX - (node.x || 0);
+              const dy = centerY - (node.y || 0);
+              if (node.vx !== undefined) node.vx += dx * k;
+              if (node.vy !== undefined) node.vy += dy * k;
+            }
+          }
+        });
+      });
+
+      // Restart simulation
+      fgRef.current.d3ReheatSimulation();
+    }
+  }, [filteredData, availableTypes]);
+
+  // Handle type filter changes
+  const handleTypeToggle = (type: string): void => {
+    setSelectedTypes((prev) => {
+      if (prev.includes(type)) {
+        return prev.filter((t) => t !== type);
+      } else {
+        return [...prev, type];
+      }
+    });
+  };
+
+  const handleNodeHover = (node: GraphNode | null): string | null => {
+    if (node) {
+      return `${node.name}\nTypes: ${node.metadata.type.join(", ")}${
+        node.metadata.parent ? "\nParent: " + node.metadata.parent : ""
+      }`;
+    }
+    return null;
+  };
+
+  return (
+    <div>
+      <div style={{ marginBottom: "20px" }}>
+        <h3>Filter by type:</h3>
+        <div style={{ display: "flex", gap: "10px", flexWrap: "wrap" }}>
+          {availableTypes.map((type) => (
+            <label
+              key={type}
+              style={{
+                display: "inline-flex",
+                alignItems: "center",
+                padding: "5px 12px",
+                borderRadius: "15px",
+                backgroundColor: selectedTypes.includes(type)
+                  ? nodeColors[type] || "#ccc"
+                  : "#eee",
+                color: selectedTypes.includes(type) ? "white" : "#333",
+                cursor: "pointer",
+                marginBottom: "5px",
+              }}
+            >
+              <input
+                type="checkbox"
+                checked={selectedTypes.includes(type)}
+                onChange={() => handleTypeToggle(type)}
+                style={{ marginRight: "5px" }}
+              />
+              {type}
+            </label>
+          ))}
+        </div>
+      </div>
+
+      <div
+        style={{
+          width: "100%",
+          height: "600px",
+          border: "1px solid #eee",
+          borderRadius: "8px",
+        }}
+      >
+        {filteredData.nodes.length > 0 && (
+          <ForceGraph2D
+            ref={fgRef}
+            graphData={filteredData}
+            nodeRelSize={8}
+            nodeColor={(node) => getNodeColor(node as GraphNode)}
+            nodeLabel={(node) => handleNodeHover(node as GraphNode)}
+            linkColor={() => "rgba(100, 100, 100, 0.6)"}
+            linkWidth={1}
+            cooldownTicks={100}
+            onEngineStop={() => fgRef.current?.zoomToFit(400)}
+            nodeCanvasObject={(node, ctx, globalScale) => {
+              const typedNode = node as GraphNode;
+              const label = typedNode.name;
+              const fontSize = 12 / globalScale;
+              ctx.font = `${fontSize}px Sans-Serif`;
+
+              // Node circle
+              ctx.beginPath();
+              ctx.arc(node.x || 0, node.y || 0, 8, 0, 2 * Math.PI);
+              ctx.fillStyle = getNodeColor(typedNode);
+              ctx.fill();
+
+              // Text below
+              ctx.textAlign = "center";
+              ctx.textBaseline = "middle";
+              ctx.fillStyle = "black";
+              ctx.fillText(label, node.x || 0, (node.y || 0) + 15);
+            }}
+          />
+        )}
+      </div>
+    </div>
+  );
+};
+
+export default SoundGraph;
