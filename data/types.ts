@@ -15,8 +15,8 @@ export interface NodeMetadata {
   }
   
   export interface GraphLink {
-    source: string;
-    target: string;
+    source: string | GraphNode;
+    target: string | GraphNode;
     id: string;
   }
   
