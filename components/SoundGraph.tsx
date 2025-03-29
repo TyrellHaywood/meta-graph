@@ -6,7 +6,7 @@ import { generateDummyData, nodeColors } from "../data/dummyData";
 import { GraphData, GraphNode, TypeColorMap } from "../data/types";
 
 const SoundGraph: React.FC = () => {
-  const fgRef = useRef<ForceGraphMethods | null>(null);
+  const fgRef = useRef<ForceGraphMethods>(undefined);
   const [selectedTypes, setSelectedTypes] = useState<string[]>([]);
   const [availableTypes, setAvailableTypes] = useState<string[]>([]);
   const [graphData, setGraphData] = useState<GraphData>({
@@ -133,13 +133,11 @@ const SoundGraph: React.FC = () => {
     });
   };
 
-  const handleNodeHover = (node: GraphNode | null): string | null => {
-    if (node) {
-      return `${node.name}\nTypes: ${node.metadata.type.join(", ")}${
-        node.metadata.parent ? "\nParent: " + node.metadata.parent : ""
-      }`;
-    }
-    return null;
+  const handleNodeHover = (node: GraphNode | null): string => {
+    if (!node) return ""; // Return empty string instead of null
+    return `${node.name}\nTypes: ${node.metadata.type.join(", ")}${
+      node.metadata.parent ? "\nParent: " + node.metadata.parent : ""
+    }`;
   };
 
   return (
