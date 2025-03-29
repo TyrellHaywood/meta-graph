@@ -1,7 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import ForceGraph2D from "react-force-graph-2d";
 import { ForceGraphMethods } from "react-force-graph-2d";
-import { D3DragEvent } from "d3-drag";
 import { generateDummyData, nodeColors } from "../data/dummyData";
 import { GraphData, GraphNode, TypeColorMap } from "../data/types";
 
