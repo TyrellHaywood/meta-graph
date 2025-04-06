@@ -1,10 +1,10 @@
-# [MetaGraph]
+# MetaGraph
 
 A React-based network visualization tool that automatically generates, clusters, and displays relationships between nodes based on their metadata.
 
 ## Overview
 
-[MetaGraph] implements [react-force-graph](https://github.com/vasturiano/react-force-graph) to show connections between data points on a canvas. It features:
+MetaGraph implements [react-force-graph](https://github.com/vasturiano/react-force-graph) to show connections between data points on a canvas. It features:
 
 - Automatic generation of implicit edges based on metadata similarity
 - Customizable node clustering by metadata attributes
@@ -17,7 +17,7 @@ A React-based network visualization tool that automatically generates, clusters,
 ### Clone the repository
 
 ```bash
-git clone https://github.com/TyrellHaywood/[meta-graph].git
+git clone https://github.com/TyrellHaywood/meta-graph.git
 ```
 
 ### Install dependencies
