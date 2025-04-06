@@ -1,8 +1,14 @@
+// Dependencies
 import React, { useEffect, useRef, useState } from "react";
 import ForceGraph2D from "react-force-graph-2d";
+
+// Data and types
 import { ForceGraphMethods } from "react-force-graph-2d";
 import { generateDummyData, nodeColors } from "../data/dummyData";
-import { GraphData, GraphNode, TypeColorMap } from "../data/types";
+import { GraphData, GraphNode } from "../data/types";
+
+// Components
+import TypeFilters from "./TypeFilters";
 
 const MetaGraph: React.FC = () => {
   const fgRef = useRef<ForceGraphMethods>(undefined);
@@ -141,38 +147,14 @@ const MetaGraph: React.FC = () => {
 
   return (
     <div>
-      <div>
-        <h3>Filter by type:</h3>
-        <div className="flex gap-2 flex-wrap">
-          {availableTypes.map((type) => (
-            <label
-              key={type}
-              style={{
-                display: "inline-flex",
-                alignItems: "center",
-                padding: "5px 12px",
-                borderRadius: "15px",
-                backgroundColor: selectedTypes.includes(type)
-                  ? nodeColors[type] || "#ccc"
-                  : "#eee",
-                color: selectedTypes.includes(type) ? "white" : "#333",
-                cursor: "pointer",
-                marginBottom: "5px",
-              }}
-            >
-              <input
-                type="checkbox"
-                checked={selectedTypes.includes(type)}
-                onChange={() => handleTypeToggle(type)}
-                style={{ marginRight: "5px" }}
-              />
-              {type}
-            </label>
-          ))}
-        </div>
-      </div>
+      <TypeFilters
+        availableTypes={availableTypes}
+        selectedTypes={selectedTypes}
+        nodeColors={nodeColors}
+        onTypeToggle={handleTypeToggle}
+      />
 
-      <div className="w-full h-full bg-red-50">
+      <div className="w-auto h-full overflow-hidden">
         {filteredData.nodes.length > 0 && (
           <ForceGraph2D
             ref={fgRef}
