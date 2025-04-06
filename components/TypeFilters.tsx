@@ -14,13 +14,10 @@ const TypeFilters: React.FC<TypeFiltersProps> = ({
   onTypeToggle,
 }) => {
   return (
-    <div className="mb-4">
-      <h3 className="">Filter by type:</h3>
-      <div className="flex gap-2 flex-wrap">
+    <div className="absolute top-4 left-0 w-full z-10 px-8">
+      <div className="flex gap-2 items-center">
         {availableTypes.map((type) => {
           const isSelected = selectedTypes.includes(type);
-          const bgColor = isSelected ? nodeColors[type] || "#ccc" : "#eee";
-          const textColor = isSelected ? "white" : "#333";
 
           return (
             <label
