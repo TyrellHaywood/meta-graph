@@ -172,8 +172,8 @@ const Graph: React.FC<GraphProps> = ({
     similarityThreshold = 0.3,
     clusteringStrength = 0.5,
     colorScheme = {
-      "parent-child": "#ff6b6b",
-      similarity: "#4ecdc4",
+      "parent-child": "#aaa",
+      similarity: "#aaa",
       default: "#aaa",
     },
   } = config;
