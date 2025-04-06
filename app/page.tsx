@@ -10,7 +10,7 @@ const MetaGraph = dynamic(() => import("../components/MetaGraph"), {
 
 const Home: React.FC = () => {
   return (
-    <div className="w-auto mx-auto">
+    <div className="w-auto mx-auto bg-[#1E1E1E] text-[#FFFDFC]">
       <MetaGraph />
     </div>
   );

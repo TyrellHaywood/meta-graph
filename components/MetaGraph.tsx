@@ -181,7 +181,7 @@ const MetaGraph: React.FC = () => {
               // Text below
               ctx.textAlign = "center";
               ctx.textBaseline = "middle";
-              ctx.fillStyle = "black";
+              ctx.fillStyle = "#FFFDFC";
               ctx.fillText(label, node.x || 0, (node.y || 0) + 15);
             }}
           />

@@ -62,10 +62,10 @@ export const generateDummyData = (): GraphData => {
 };
 
 export const nodeColors: Record<string, string> = {
-  'instrument': '#4285F4', // blue
-  'voice': '#EA4335',      // red
-  'ambience': '#34A853',   // green
-  'electronic': '#FBBC05', // yellow
-  'remix': '#8e44ad',      // purple
-  'effects': '#e67e22'     // orange
+  'instrument': '#E5E5E5',
+  'voice': '#E5E5E5',      
+  'ambience': '#E5E5E5',  
+  'electronic': '#E5E5E5', 
+  'remix': '#E5E5E5',      
+  'effects': '#E5E5E5'   
 };

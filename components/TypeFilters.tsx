@@ -25,11 +25,7 @@ const TypeFilters: React.FC<TypeFiltersProps> = ({
           return (
             <label
               key={type}
-              className="inline-flex items-center px-3 py-1.5 rounded-full mb-1.5 cursor-pointer"
-              style={{
-                backgroundColor: bgColor,
-                color: textColor,
-              }}
+              className="inline-flex items-center px-3 py-1.5 rounded-full mb-1.5 cursor-pointer bg-[#424242]"
             >
               <input
                 type="checkbox"
