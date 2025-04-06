@@ -4,7 +4,7 @@ import { ForceGraphMethods } from "react-force-graph-2d";
 import { generateDummyData, nodeColors } from "../data/dummyData";
 import { GraphData, GraphNode, TypeColorMap } from "../data/types";
 
-const SoundGraph: React.FC = () => {
+const MetaGraph: React.FC = () => {
   const fgRef = useRef<ForceGraphMethods>(undefined);
   const [selectedTypes, setSelectedTypes] = useState<string[]>([]);
   const [availableTypes, setAvailableTypes] = useState<string[]>([]);
@@ -141,9 +141,9 @@ const SoundGraph: React.FC = () => {
 
   return (
     <div>
-      <div style={{ marginBottom: "20px" }}>
+      <div>
         <h3>Filter by type:</h3>
-        <div style={{ display: "flex", gap: "10px", flexWrap: "wrap" }}>
+        <div className="flex gap-2 flex-wrap">
           {availableTypes.map((type) => (
             <label
               key={type}
@@ -172,14 +172,7 @@ const SoundGraph: React.FC = () => {
         </div>
       </div>
 
-      <div
-        style={{
-          width: "100%",
-          height: "600px",
-          border: "1px solid #eee",
-          borderRadius: "8px",
-        }}
-      >
+      <div className="w-full h-full bg-red-50">
         {filteredData.nodes.length > 0 && (
           <ForceGraph2D
             ref={fgRef}
@@ -216,4 +209,4 @@ const SoundGraph: React.FC = () => {
   );
 };
 
-export default SoundGraph;
+export default MetaGraph;
