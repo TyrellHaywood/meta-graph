@@ -1,5 +1,7 @@
 # MetaGraph
 
+![MetaGraph](/public/images/MetaGraph.gif)
+
 A React-based network visualization tool that automatically generates, clusters, and displays relationships between nodes based on their metadata.
 
 ## Overview
@@ -44,3 +46,28 @@ npm i --save-dev @types/d3
 | `similarityThreshold` | Minimum similarity for implicit edges | `0.3`       |
 | `clusteringStrength`  | How strongly nodes cluster by type    | `0.5`       |
 | `colorScheme`         | Colors for different edge types       | `#aaa`      |
+
+## Data Structure
+
+This uses `DummyData.ts` to generate test data for visualization. This file:
+
+- Creates nodes with different types (examples: instrument, voice, ambience, electronic, remix, effects)
+- Defines parent-child relationships between nodes
+- Generates links based on these relationships
+- Defines node colors for different categories (optional)
+
+### Node Structure
+
+Each node has the following properties:
+
+```typeScript
+{
+  id: string,                    // Unique identifier
+  name: string,                  // Display name
+  metadata: {
+    type: string[],              // Array of categories
+    parent: string,              // ID of parent node (if any exist)
+    child: string                // ID of child node (if any exist)
+  }
+}
+```
